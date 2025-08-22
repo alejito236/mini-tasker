@@ -188,24 +188,26 @@ docker compose restart app
 
 
 # ⚡️Quickstart
-# 1) Levantar stack
+1) Levantar stack
 docker compose up -d --build
 
-# 2) Aplicar migraciones (Git Bash / Linux)
+2) Aplicar migraciones (Git Bash / Linux)
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
-# 2b) PowerShell (Windows)
+2b) PowerShell (Windows)
 type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
 type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 
-# 3) Verificar tablas
+ 3) Verificar tablas
 docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
-# Debe mostrar: users, tasks
+Debe mostrar: users, tasks
 
-# 4) Frontend
+4) Frontend
 cd frontend
 npm install
 npm run dev
-# abrir http://localhost:5174
+abrir http://localhost:5174
 
