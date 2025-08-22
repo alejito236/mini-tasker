@@ -6,29 +6,7 @@ Permite: **registro / login**, **crear / listar / actualizar tareas** y verlas e
 ## 📦 Stack
 
 - **Backend:** Phalcon 5 (Micro), PHP-FPM, Nginx, MySQL 8, JWT
-- **Frontend:** React + Vite + Redux Toolkit (opcional, ver sección)
 - **Infra:** Docker & Docker Compose
-
----
-
-## 📁 Estructura del proyecto
-
-mini-tasker/
-├─ backend/
-│ ├─ app/
-│ │ ├─ config/config.php
-│ │ ├─ models/Users.php
-│ │ ├─ models/Tasks.php
-│ │ └─ services/JwtService.php
-│ ├─ db/
-│ │ ├─ 001_users.sql
-│ │ └─ 002_tasks.sql
-│ ├─ nginx/default.conf
-│ ├─ public/index.php
-│ ├─ composer.json
-│ └─ vendor/ (generado por composer install - NO subir a git)
-├─ docker-compose.yml
-└─ README.md
 
 
 
