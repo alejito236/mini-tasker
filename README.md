@@ -163,13 +163,29 @@ Resetear
 docker compose down -v
 docker compose up -d --build
 
-🧱 Migraciones (SQL)
+## 🧱 Migraciones (SQL)
 
-Los scripts SQL están en backend/db/ y se ejecutan en orden alfabético:
+Los scripts SQL están en `backend/db/` y **se ejecutan en orden alfabético**:
 
 backend/db/
 ├─ 001_users.sql
 └─ 002_tasks.sql
 
-    Importante: Mantén la numeración (003_, 004_, …) para nuevas migraciones.
-    La base tasks_db la crea MySQL automáticamente con las variables del docker-compose.yml.
+
+### Ejecutar migraciones manualmente
+
+**Linux / Git Bash**
+
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
+
+Windows PowerShell
+
+type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
+Verificar que las tablas se crearon
+
+docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
+
+    Si quieres aplicar todas las migraciones automáticamente, mapea ./backend/db en el docker-compose.yml a /docker-entrypoint-initdb.d y recrea el contenedor de MySQL.
