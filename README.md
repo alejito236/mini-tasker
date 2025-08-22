@@ -122,7 +122,9 @@ curl -X POST http://localhost:8080/api/tasks \
 Desarrollo
 
 cd frontend
+
 npm install
+
 npm run dev
 
 Abrir: http://localhost:5174
