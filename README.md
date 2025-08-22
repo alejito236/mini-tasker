@@ -1,3 +1,14 @@
+
+# ✅ Requisitos previos
+
+Docker Desktop (Win/Mac/Linux)
+
+Node.js 18+ y npm (para el frontend local)
+
+Puertos libres: 8080 (API), 5174 (Vite), 3307 (MySQL host)
+
+
+
 # 📘 Mini Tasker
 
 Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas:
@@ -172,3 +183,29 @@ docker compose restart app
 
 ### Vista de Tareas
 ![Tasks](docs/tasks.png)
+
+
+
+
+⚡️Quickstart
+# 1) Levantar stack
+docker compose up -d --build
+
+# 2) Aplicar migraciones (Git Bash / Linux)
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
+
+# 2b) PowerShell (Windows)
+type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
+# 3) Verificar tablas
+docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
+# Debe mostrar: users, tasks
+
+# 4) Frontend
+cd frontend
+npm install
+npm run dev
+# abrir http://localhost:5174
+
