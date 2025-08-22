@@ -40,6 +40,23 @@ $di->setShared('jwt', function () use ($di) {
 
 $app = new Micro($di);
 
+$setCors = function (\Phalcon\Http\Response $res) {
+    $res->setHeader('Access-Control-Allow-Origin', '*'); 
+    $res->setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
+    $res->setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    $res->setHeader('Access-Control-Max-Age', '86400');
+    return $res;
+};
+
+$app->after(function () use ($app, $setCors) {
+    $setCors($app->response);
+});
+
+$app->options('/{catch:.*}', function ($catch = null) use ($app, $setCors) {
+    $app->response->setStatusCode(204, 'No Content');
+    $setCors($app->response);
+    return $app->response;
+});
 
 $app->get('/', function () use ($app) {
     return json_encode([
