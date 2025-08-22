@@ -46,6 +46,8 @@ Linux / Git Bash (o Git Bash en Windows)
 Ejecutar cada archivo en orden:
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+
+
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
 # O ejecutar todos en orden:
