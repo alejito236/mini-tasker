@@ -56,7 +56,7 @@ for f in backend/db/*.sql; do
   docker exec -i mysql_db mysql -u root -proot tasks_db < "$f"
 done
 
-Windows PowerShell
+## Windows PowerShell
 
 # Ejecutar uno por uno
 type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
