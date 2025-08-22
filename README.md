@@ -26,7 +26,7 @@ VITE_API_URL=http://localhost:8080
 
 
 2. **Docker up**
-```bash
+
 docker compose up -d --build
 
     Backend (API) → http://localhost:8080
@@ -147,3 +147,51 @@ Resetear:
 
 docker compose down -v
 docker compose up -d --build
+
+
+## 🧱 Migraciones (SQL)
+
+Los scripts SQL están en `backend/db/` y **se ejecutan en orden alfabético**, por eso usan prefijos numéricos:
+
+
+backend/db/
+├─ 001_users.sql
+└─ 002_tasks.sql
+
+
+
+> **Importante:** Mantén la numeración (003_, 004_, …) para nuevas migraciones.  
+> La base `tasks_db` la crea MySQL automáticamente con las variables del `docker-compose.yml`.
+
+### Opción 1 — Ejecutar **manualmente** (recomendado para desarrollo)
+
+**Linux / Git Bash**
+
+# Ejecutar uno por uno
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
+
+# Ejecutar TODOS en orden (por nombre)
+for f in backend/db/*.sql; do
+  echo "Aplicando $f"
+  docker exec -i mysql_db mysql -u root -proot tasks_db < "$f"
+done
+
+
+
+Windows PowerShell
+
+
+# Ejecutar uno por uno
+type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
+# Ejecutar TODOS en orden (por nombre)
+Get-ChildItem .\backend\db\*.sql | Sort-Object Name | ForEach-Object {
+  Write-Host "Aplicando $($_.Name)"
+  Get-Content $_.FullName | docker exec -i mysql_db mysql -u root -proot tasks_db
+}
+
+
+docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
+
