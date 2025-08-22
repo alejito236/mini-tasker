@@ -140,17 +140,21 @@ server: {
 Logs
 
 docker logs -f nginx_server
+
 docker logs -f phalcon_app
+
 docker logs -f mysql_db
 
 Entrar a contenedor
 
 docker exec -it phalcon_app sh
+
 docker exec -it mysql_db bash
 
 Resetear
 
 docker compose down -v
+
 docker compose up -d --build
 
 
