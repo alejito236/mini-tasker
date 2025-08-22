@@ -15,7 +15,7 @@ class Users extends Model
 
     public function beforeSave(): void
     {
-        // Hashear si aún no está hasheado
+
         if (!preg_match('/^\$2y\$/', (string) $this->password)) {
             $this->password = password_hash($this->password, PASSWORD_BCRYPT);
         }

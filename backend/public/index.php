@@ -17,7 +17,7 @@ $di->setShared('config', function () {
 });
 
 $di->setShared('db', function () {
-    $c = $this->get('config')->db; // usa la clave 'db' del config
+    $c = $this->get('config')->db; 
     return new Mysql([
         'host'     => $c->host,
         'username' => $c->username,
@@ -33,14 +33,14 @@ $di->setShared('response', function () {
     return $r;
 });
 
-// JWT
+
 $di->setShared('jwt', function () use ($di) {
     return new JwtService($di);
 });
 
 $app = new Micro($di);
 
-// --- Salud
+
 $app->get('/', function () use ($app) {
     return json_encode([
         'status'  => 'ok',
@@ -48,7 +48,6 @@ $app->get('/', function () use ($app) {
     ]);
 });
 
-// --- Helpers
 $body = function () use ($app) {
     return $app->request->getJsonRawBody(true) ?? [];
 };
@@ -58,7 +57,6 @@ $json = function ($data, int $code = 200) use ($app) {
     return $app->response;
 };
 
-// --- Auth helper: lee Authorization: Bearer <token>
 $authUser = function () use ($app) {
     $h = $app->request->getHeader('Authorization');
     if (!$h || stripos($h, 'Bearer ') !== 0) {
@@ -75,7 +73,7 @@ $authUser = function () use ($app) {
     }
 };
 
-// --- Auth: Register
+
 $app->post('/api/register', function () use ($app, $body, $json) {
     $data = $body();
     $email = trim($data['email'] ?? '');
@@ -114,7 +112,7 @@ $app->post('/api/register', function () use ($app, $body, $json) {
     return $json(['message' => 'Usuario registrado']);
 });
 
-// --- Auth: Login
+
 $app->post('/api/login', function () use ($app, $body, $json) {
     $data = $body();
     $email = trim($data['email'] ?? '');
@@ -137,11 +135,7 @@ $app->post('/api/login', function () use ($app, $body, $json) {
 });
 
 
-// ======================================================================
-// 5) Endpoints de TAREAS (protegidos con JWT)
-// ======================================================================
 
-// GET /api/tasks?status=pending|in_progress|done
 $app->get('/api/tasks', function () use ($app, $json, $authUser) {
     [$u, $err] = $authUser();
     if ($err) return $json(['message' => $err], 401);
@@ -179,7 +173,6 @@ $app->get('/api/tasks', function () use ($app, $json, $authUser) {
     return $json($out);
 });
 
-// POST /api/tasks  {title, description?, status?}
 $app->post('/api/tasks', function () use ($app, $json, $body, $authUser) {
     [$u, $err] = $authUser();
     if ($err) return $json(['message' => $err], 401);
@@ -206,7 +199,6 @@ $app->post('/api/tasks', function () use ($app, $json, $body, $authUser) {
     return $json(['message' => 'Tarea creada', 'id' => $t->id], 201);
 });
 
-// PUT /api/tasks/{id}  {title?, description?, status?}
 $app->put('/api/tasks/{id:[0-9]+}', function ($id) use ($app, $json, $body, $authUser) {
     [$u, $err] = $authUser();
     if ($err) return $json(['message' => $err], 401);
@@ -240,10 +232,10 @@ $app->put('/api/tasks/{id:[0-9]+}', function ($id) use ($app, $json, $body, $aut
     return $json(['message' => 'Tarea actualizada']);
 });
 
-// --- 404 JSON
+
 $app->notFound(function () use ($json) {
     return $json(['message' => 'Ruta no encontrada'], 404);
 });
 
-// --- Run
+
 $app->handle($_SERVER['REQUEST_URI']);
