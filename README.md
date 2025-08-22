@@ -135,6 +135,11 @@ server: {
   },
 }
 
+
+# Reiniciar el servicio 
+
+docker compose restart app
+
 🧰 Comandos útiles
 
 Logs
@@ -157,7 +162,7 @@ docker compose down -v
 
 docker compose up -d --build
 
-
+docker compose restart app
 
 
 ## 📸 Screenshots
