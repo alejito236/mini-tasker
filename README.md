@@ -189,3 +189,12 @@ Verificar que las tablas se crearon
 docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
 
     Si quieres aplicar todas las migraciones automáticamente, mapea ./backend/db en el docker-compose.yml a /docker-entrypoint-initdb.d y recrea el contenedor de MySQL.
+
+
+## 📸 Screenshots
+
+### Login
+![Login](docs/login.png)
+
+### Vista de Tareas
+![Tasks](docs/tasks.png)
