@@ -37,44 +37,33 @@ docker compose up -d --build
 Frontend (Vite) → http://localhost:5174
 
     MySQL → expuesto en localhost:3307
+## 🧱 Migraciones (SQL)
 
-🗄️ Base de datos
-A) Cargar SQL manualmente
+Los scripts SQL están en `backend/db/` y **se ejecutan en orden alfabético**:
 
-Linux / Git Bash (o Git Bash en Windows)
+backend/db/
+├─ 001_users.sql
+└─ 002_tasks.sql
 
-Ejecutar cada archivo en orden:
+
+### Ejecutar migraciones manualmente
+
+**Linux / Git Bash**
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
-
-
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
-# O ejecutar todos en orden:
-for f in backend/db/*.sql; do
-  echo "Aplicando $f"
-  docker exec -i mysql_db mysql -u root -proot tasks_db < "$f"
-done
+Windows PowerShell
 
-# Verificar creacion de tablas. 
-docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
-
-
-## Windows PowerShell
-
-# Ejecutar uno por uno
 type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 
-# Ejecutar todos en orden
-Get-ChildItem .\backend\db\*.sql | Sort-Object Name | ForEach-Object {
-  Write-Host "Aplicando $($_.Name)"
-  Get-Content $_.FullName | docker exec -i mysql_db mysql -u root -proot tasks_db
-}
-
-Verificar tablas
+Verificar que las tablas se crearon
 
 docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
+
+    Si quieres aplicar todas las migraciones automáticamente, mapea ./backend/db en el docker-compose.yml a /docker-entrypoint-initdb.d y recrea el contenedor de MySQL.
+
 
 B) Inicialización automática
 
@@ -160,32 +149,7 @@ Resetear
 docker compose down -v
 docker compose up -d --build
 
-## 🧱 Migraciones (SQL)
 
-Los scripts SQL están en `backend/db/` y **se ejecutan en orden alfabético**:
-
-backend/db/
-├─ 001_users.sql
-└─ 002_tasks.sql
-
-
-### Ejecutar migraciones manualmente
-
-**Linux / Git Bash**
-
-docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
-docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
-
-Windows PowerShell
-
-type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
-type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
-
-Verificar que las tablas se crearon
-
-docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
-
-    Si quieres aplicar todas las migraciones automáticamente, mapea ./backend/db en el docker-compose.yml a /docker-entrypoint-initdb.d y recrea el contenedor de MySQL.
 
 
 ## 📸 Screenshots
