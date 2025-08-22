@@ -1,4 +1,4 @@
-# 📘 Mini Tasker — README
+# 📘 Mini Tasker
 
 Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas:
 
@@ -19,33 +19,47 @@ Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas
 
 ## 🐳 Levantar el proyecto
 
-1. **Variables frontend**  
-   Crear `frontend/.env`:
+### 1. Variables frontend
+Crear `frontend/.env`:
+
 
 VITE_API_URL=http://localhost:8080
 
-
-2. **Docker up**
+2. Docker up
 
 docker compose up -d --build
 
     Backend (API) → http://localhost:8080
 
-    Frontend (Vite) → http://localhost:5174
+Frontend (Vite) → http://localhost:5174
 
     MySQL → expuesto en localhost:3307
 
 🗄️ Base de datos
 A) Cargar SQL manualmente
+
 Linux / Git Bash
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
-PowerShell (usar type en lugar de <)
+# O ejecutar todos en orden:
+for f in backend/db/*.sql; do
+  echo "Aplicando $f"
+  docker exec -i mysql_db mysql -u root -proot tasks_db < "$f"
+done
 
+Windows PowerShell
+
+# Ejecutar uno por uno
 type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
+# Ejecutar todos en orden
+Get-ChildItem .\backend\db\*.sql | Sort-Object Name | ForEach-Object {
+  Write-Host "Aplicando $($_.Name)"
+  Get-Content $_.FullName | docker exec -i mysql_db mysql -u root -proot tasks_db
+}
 
 Verificar tablas
 
@@ -76,7 +90,7 @@ docker compose up -d --build
 
     PUT /api/tasks/{id} → actualizar tarea
 
-Ejemplos (curl)
+Ejemplos con curl
 
 # Registro
 curl -X POST http://localhost:8080/api/register \
@@ -99,13 +113,14 @@ Desarrollo
 cd frontend
 npm install
 npm run dev
-# abre http://localhost:5174
+
+Abrir: http://localhost:5174
 
 Configura .env con:
 
 VITE_API_URL=http://localhost:8080
 
-Proxy opcional en vite.config.js
+Proxy opcional en vite.config.js:
 
 server: {
   port: 5174,
@@ -116,82 +131,45 @@ server: {
 
 ✅ Criterios de evaluación (checklist)
 
-Autenticación JWT
+    Autenticación JWT
 
-API REST de usuarios y tareas
+    API REST de usuarios y tareas
 
-Validaciones (email, password, status)
+    Validaciones (email, password, status)
 
-Seguridad básica
+    Seguridad básica
 
-Frontend React con Redux
+    Frontend React con Redux
 
-UI con Tailwind
+    UI con Tailwind
 
     Docker stack completo
 
 🧰 Comandos útiles
 
-Logs:
+Logs
 
 docker logs -f nginx_server
 docker logs -f phalcon_app
 docker logs -f mysql_db
 
-Entrar a contenedor:
+Entrar a contenedor
 
 docker exec -it phalcon_app sh
 docker exec -it mysql_db bash
 
-Resetear:
+Resetear
 
 docker compose down -v
 docker compose up -d --build
 
+🧱 Migraciones (SQL)
 
-## 🧱 Migraciones (SQL)
-
-Los scripts SQL están en `backend/db/` y **se ejecutan en orden alfabético**, por eso usan prefijos numéricos:
-
+Los scripts SQL están en backend/db/ y se ejecutan en orden alfabético:
 
 backend/db/
 ├─ 001_users.sql
 └─ 002_tasks.sql
 
-
-
-> **Importante:** Mantén la numeración (003_, 004_, …) para nuevas migraciones.  
-> La base `tasks_db` la crea MySQL automáticamente con las variables del `docker-compose.yml`.
-
-### Opción 1 — Ejecutar **manualmente** (recomendado para desarrollo)
-
-**Linux / Git Bash**
-
-# Ejecutar uno por uno
-docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
-docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
-
-# Ejecutar TODOS en orden (por nombre)
-for f in backend/db/*.sql; do
-  echo "Aplicando $f"
-  docker exec -i mysql_db mysql -u root -proot tasks_db < "$f"
-done
-
-
-
-Windows PowerShell
-
-
-# Ejecutar uno por uno
-type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
-type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
-
-# Ejecutar TODOS en orden (por nombre)
-Get-ChildItem .\backend\db\*.sql | Sort-Object Name | ForEach-Object {
-  Write-Host "Aplicando $($_.Name)"
-  Get-Content $_.FullName | docker exec -i mysql_db mysql -u root -proot tasks_db
-}
-
-
-docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
-
+    Importante: Mantén la numeración (003_, 004_, …) para nuevas migraciones.
+    La base tasks_db la crea MySQL automáticamente con las variables del docker-compose.yml.
