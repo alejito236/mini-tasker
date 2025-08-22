@@ -17,41 +17,6 @@ Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas
 
 ---
 
-## 📂 Estructura del proyecto
-
-mini-tasker/
-├─ backend/
-│ ├─ app/
-│ │ ├─ config/ # config.php (DB, rutas locales)
-│ │ ├─ models/ # Users.php, Tasks.php
-│ │ └─ services/ # JwtService.php
-│ ├─ db/
-│ │ ├─ 001_users.sql
-│ │ └─ 002_tasks.sql
-│ ├─ nginx/
-│ │ └─ default.conf # vhost nginx → /backend/public/index.php
-│ ├─ composer.json
-│ └─ public/
-│ └─ index.php # Bootstrap Micro + endpoints
-├─ frontend/
-│ ├─ src/
-│ │ ├─ api/client.js
-│ │ ├─ pages/ # Login.jsx, Register.jsx, Tasks.jsx
-│ │ ├─ components/ # Navbar.jsx, TaskForm.jsx, TaskList.jsx
-│ │ └─ store/ # authSlice.js, tasksSlice.js, index.js
-│ ├─ index.html
-│ ├─ vite.config.js
-│ ├─ tailwind.config.js
-│ ├─ postcss.config.js
-│ └─ .env # VITE_API_URL=http://localhost:8080
-
-
-├─ docker-compose.yml
-└─ README.md
-
-
----
-
 ## 🐳 Levantar el proyecto
 
 1. **Variables frontend**  
