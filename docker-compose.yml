@@ -1,0 +1,39 @@
+services:
+  app:
+    image: phalconphp/cphalcon:v5.9.2-php8.1
+    container_name: phalcon_app
+    working_dir: /var/www/html
+    volumes:
+      - /c/xampp/htdocs/mini-tasker/backend:/var/www/html 
+    depends_on:
+      - db
+
+  web:
+    image: nginx:alpine
+    container_name: nginx_server
+    ports:
+      - "8080:80"
+    volumes:
+      - /c/xampp/htdocs/mini-tasker/backend:/var/www/html  
+      - type: bind
+        source: /c/xampp/htdocs/mini-tasker/backend/nginx/default.conf
+        target: /etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tasks_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
