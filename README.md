@@ -51,11 +51,15 @@ backend/db/
 **Linux / Git Bash**
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
+
+
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
 Windows PowerShell
 
 type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+
+
 type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 
 Verificar que las tablas se crearon
