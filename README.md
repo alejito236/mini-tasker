@@ -187,7 +187,7 @@ docker compose restart app
 
 
 
-#⚡️Quickstart
+# ⚡️Quickstart
 # 1) Levantar stack
 docker compose up -d --build
 
