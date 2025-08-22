@@ -142,22 +142,6 @@ server: {
   },
 }
 
-✅ Criterios de evaluación (checklist)
-
-    Autenticación JWT
-
-    API REST de usuarios y tareas
-
-    Validaciones (email, password, status)
-
-    Seguridad básica
-
-    Frontend React con Redux
-
-    UI con Tailwind
-
-    Docker stack completo
-
 🧰 Comandos útiles
 
 Logs
