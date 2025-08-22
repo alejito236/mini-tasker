@@ -1,106 +1,184 @@
-# Mini Tasker – Fullstack (Phalcon + React)
+# 📘 Mini Tasker — README
 
-Mini gestor de tareas con **backend en Phalcon (PHP)** y **frontend en React**.  
-Permite: **registro / login**, **crear / listar / actualizar tareas** y verlas en un **frontend**.
+Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas:
 
-## 📦 Stack
+- Registro / Login (JWT)
+- Listar / filtrar tareas
+- Crear / editar tareas
+- Frontend con Vite + Tailwind
 
-- **Backend:** Phalcon 5 (Micro), PHP-FPM, Nginx, MySQL 8, JWT
-- **Infra:** Docker & Docker Compose
+---
 
+## 🚀 Stack
+
+- **Backend**: Phalcon PHP (Micro), Nginx, PHP-FPM, MySQL 8
+- **Frontend**: React + Redux Toolkit + Vite + TailwindCSS
+- **Infra**: Docker Compose
+
+---
+
+## 📂 Estructura del proyecto
+
+mini-tasker/
+├─ backend/
+│ ├─ app/
+│ │ ├─ config/ # config.php (DB, rutas locales)
+│ │ ├─ models/ # Users.php, Tasks.php
+│ │ └─ services/ # JwtService.php
+│ ├─ db/
+│ │ ├─ 001_users.sql
+│ │ └─ 002_tasks.sql
+│ ├─ nginx/
+│ │ └─ default.conf # vhost nginx → /backend/public/index.php
+│ ├─ composer.json
+│ └─ public/
+│ └─ index.php # Bootstrap Micro + endpoints
+├─ frontend/
+│ ├─ src/
+│ │ ├─ api/client.js
+│ │ ├─ pages/ # Login.jsx, Register.jsx, Tasks.jsx
+│ │ ├─ components/ # Navbar.jsx, TaskForm.jsx, TaskList.jsx
+│ │ └─ store/ # authSlice.js, tasksSlice.js, index.js
+│ ├─ index.html
+│ ├─ vite.config.js
+│ ├─ tailwind.config.js
+│ ├─ postcss.config.js
+│ └─ .env # VITE_API_URL=http://localhost:8080
+
+
+├─ docker-compose.yml
+└─ README.md
 
 
 ---
 
-## 🚀 Levantar el backend con Docker
+## 🐳 Levantar el proyecto
 
-### 1) Pre-requisitos
-- Docker Desktop y Docker Compose
-- (Windows) Compartir el disco `C:` con Docker Desktop (Settings → Resources → File sharing)
+1. **Variables frontend**  
+   Crear `frontend/.env`:
 
-### 2) Arranque
-Desde la raíz del proyecto:
-bash
+VITE_API_URL=http://localhost:8080
+
+
+2. **Docker up**
+```bash
 docker compose up -d --build
 
-Servicios esperados
+    Backend (API) → http://localhost:8080
 
-    nginx_server → http://localhost:8080
+    Frontend (Vite) → http://localhost:5174
 
-    phalcon_app → PHP-FPM (puerto interno 9000)
+    MySQL → expuesto en localhost:3307
 
-    mysql_db → MySQL en localhost:3307 (desde host)
-
-3) Instalar dependencias PHP dentro del contenedor
-
-docker exec -it -u root phalcon_app bash
-cd /var/www/html
-composer install --no-interaction --prefer-dist
-exit
-
-4) Crear tablas (migraciones simples)
-
-Git Bash / Linux / WSL
+🗄️ Base de datos
+A) Cargar SQL manualmente
+Linux / Git Bash
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
 
-PowerShell (Windows)
+PowerShell (usar type en lugar de <)
 
-Get-Content backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
-Get-Content backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+type .\backend\db\001_users.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
+type .\backend\db\002_tasks.sql | docker exec -i mysql_db mysql -u root -proot tasks_db
 
-📡 Endpoints de la API
+Verificar tablas
 
-Base URL: http://localhost:8080
-Autenticación
+docker exec -it mysql_db mysql -u root -proot -e "USE tasks_db; SHOW TABLES;"
 
-    Registro → POST /api/register
+B) Inicialización automática
 
-    Login → POST /api/login
+En docker-compose.yml, mapear SQL:
 
-Tareas (JWT requerido en header Authorization: Bearer <TOKEN>)
+volumes:
+  - db_data:/var/lib/mysql
+  - ./backend/db:/docker-entrypoint-initdb.d
 
-    Listar → GET /api/tasks
+Luego:
 
-    Crear → POST /api/tasks
+docker compose down -v
+docker compose up -d --build
 
-    Actualizar → PUT /api/tasks/{id}
+🔐 Endpoints principales
 
-🧪 Pruebas rápidas (curl)
+    POST /api/register → registrar usuario
 
-Registro
+    POST /api/login → retorna { token }
 
+    GET /api/tasks → listar tareas (requiere Authorization: Bearer <token>)
+
+    POST /api/tasks → crear tarea
+
+    PUT /api/tasks/{id} → actualizar tarea
+
+Ejemplos (curl)
+
+# Registro
 curl -X POST http://localhost:8080/api/register \
   -H "Content-Type: application/json" \
   -d '{"email":"demo@example.com","password":"secret123"}'
 
-Login
-
-curl -X POST http://localhost:8080/api/login \
+# Login
+TOKEN=$(curl -s -X POST http://localhost:8080/api/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"demo@example.com","password":"secret123"}'
+  -d '{"email":"demo@example.com","password":"secret123"}' | jq -r .token)
 
-Crear tarea
-
+# Crear tarea
 curl -X POST http://localhost:8080/api/tasks \
-  -H "Authorization: Bearer TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Mi primera tarea","description":"Probar API","status":"pending"}'
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"title":"Primera tarea","description":"prueba","status":"pending"}'
+
+🖥️ Frontend
+Desarrollo
+
+cd frontend
+npm install
+npm run dev
+# abre http://localhost:5174
+
+Configura .env con:
+
+VITE_API_URL=http://localhost:8080
+
+Proxy opcional en vite.config.js
+
+server: {
+  port: 5174,
+  proxy: {
+    "/api": { target: "http://localhost:8080", changeOrigin: true },
+  },
+}
+
+✅ Criterios de evaluación (checklist)
+
+Autenticación JWT
+
+API REST de usuarios y tareas
+
+Validaciones (email, password, status)
+
+Seguridad básica
+
+Frontend React con Redux
+
+UI con Tailwind
+
+    Docker stack completo
 
 🧰 Comandos útiles
 
 Logs:
 
-docker logs -f phalcon_app
 docker logs -f nginx_server
+docker logs -f phalcon_app
 docker logs -f mysql_db
 
-Shell en contenedor:
+Entrar a contenedor:
 
-docker exec -it phalcon_app bash
+docker exec -it phalcon_app sh
+docker exec -it mysql_db bash
 
-Reiniciar stack:
+Resetear:
 
 docker compose down -v
 docker compose up -d --build
