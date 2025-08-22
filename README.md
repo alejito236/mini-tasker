@@ -19,6 +19,9 @@ Aplicación full-stack (Phalcon PHP + MySQL + React/Redux) para gestionar tareas
 
 ## 🐳 Levantar el proyecto
 
+### Arrancar contenedor
+docker compose up -d --build
+
 ### 1. Variables frontend
 Crear `frontend/.env`:
 
@@ -38,7 +41,9 @@ Frontend (Vite) → http://localhost:5174
 🗄️ Base de datos
 A) Cargar SQL manualmente
 
-Linux / Git Bash
+Linux / Git Bash (o Git Bash en Windows)
+
+Ejecutar cada archivo en orden:
 
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/001_users.sql
 docker exec -i mysql_db mysql -u root -proot tasks_db < backend/db/002_tasks.sql
